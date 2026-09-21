@@ -1,0 +1,25 @@
+{
+  "name": "bz_cts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "init-db": "node src/scripts/initDb.js",
+    "seed-categories": "node src/scripts/seedCategories.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "markdown-it": "^15.0.2",
+    "pg": "^8.22.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}

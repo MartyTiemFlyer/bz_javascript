@@ -1,0 +1,148 @@
+<!-- шаблон для СПИСКА статей внутри категории -->
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>База знаний ЦТС</title>
+
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+
+  <body>
+    <!-- Шапка -->
+
+    <header class="header">
+      <a href="#" class="logo">
+        <span class="logo-icon">📚</span>
+        <span>База знаний</span>
+      </a>
+
+      <div class="search">
+        <input type="text" placeholder="Поиск по базе знаний..." />
+      </div>
+
+      <a href="#" class="user">
+        <span class="user-icon">👤</span>
+        <span>Пользователь</span>
+      </a>
+    </header>
+
+    <!--   Основная раскладка -->
+
+    <div class="layout">
+      <!--  Боковая панель    -->
+
+      <aside class="sidebar">
+        <div class="sidebar-title">База знаний</div>
+
+        <!-- Категория: Скрипты -->
+
+        <div class="category">
+          <a href="#" class="category-title">
+            <span class="category-icon">📜</span>
+            <span>Скрипты</span>
+          </a>
+
+          <div class="pages">
+            <a href="#" class="page-link">
+              <span class="page-icon">📄</span>
+              <span>Скрипт 1</span>
+            </a>
+
+            <a href="#" class="page-link">
+              <span class="page-icon">📄</span>
+              <span>Скрипт 2</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Категория: Документация -->
+
+        <div class="category">
+          <a href="#" class="category-title">
+            <span class="category-icon">📚</span>
+            <span>Документация</span>
+          </a>
+
+          <div class="pages">
+            <a href="#" class="page-link">
+              <span class="page-icon">📄</span>
+              <span>Установка</span>
+            </a>
+
+            <a href="#" class="page-link">
+              <span class="page-icon">📄</span>
+              <span>Настройка проекта</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Категория: Инструкции -->
+
+        <div class="category">
+          <a href="#" class="category-title">
+            <span class="category-icon">📋</span>
+            <span>Инструкции</span>
+          </a>
+
+          <div class="pages">
+            <a href="#" class="page-link">
+              <span class="page-icon">📄</span>
+              <span>Для разработчика</span>
+            </a>
+
+            <a href="#" class="page-link">
+              <span class="page-icon">📄</span>
+              <span>Для пользователя</span>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <!--  Основное содержимое -->
+      <main class="content">
+        <!-- breadcrumbs -->
+        <div class="breadcrumbs">
+          <a href="#">База знаний</a>
+          <span>/</span>
+          <a href="#">Скрипты</a>
+        </div>
+
+        <!--          Заголовок страницы          -->
+        <div class="page-header">
+          <div>
+            <h1></h1>
+            <div class="page-meta">
+              Автор: Пользователь · Изменено: 16.09.2026
+            </div>
+            <p class="author">
+              Автор:
+              <!--PAGE_AUTHOR-->
+            </p>
+          </div>
+
+          <a href="#" class="edit-button"> ✏️ Редактировать </a>
+        </div>
+
+        <!--==========================-->
+        <!-- Основная область статьи-->
+        <div class="page-layout">
+          <!--    Содержание (нужно ли?)    -->
+
+          <!--    Markdown → HTML  -->
+          <article class="markdown">
+            <ul class="page-list">
+              <% pages.forEach(function(page) { %>
+                <li>
+                  <a href="/<%- category_slug %>/<%- page.slug %>"><%- page.title %></a>
+                </li>
+              <% }); %>
+            </ul>
+          </article>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

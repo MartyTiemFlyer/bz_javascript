@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres-dev
+    environment:
+      POSTGRES_DB: knowledge_base_cts
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: document
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: knowledge_base_cts
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    depends_on:
+      - postgres
+    volumes:
+      - ./document:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
