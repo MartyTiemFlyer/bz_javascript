@@ -1,0 +1,14 @@
+<!-- breadcrumbs.ejs -->
+<div class="breadcrumbs">
+  <% breadcrumbs.forEach(function(crumb, index) { %>
+    <% if (index > 0) { %>
+      <span>/</span>
+    <% } %>
+
+    <% if (crumb.url) { %>
+      <a href="<%= crumb.url %>"><%= crumb.title %></a>
+    <% } else { %>
+      <span><%= crumb.title %></span>
+    <% } %>
+  <% }); %>
+</div>

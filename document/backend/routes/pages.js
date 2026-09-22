@@ -12,7 +12,7 @@ router.get('/:category/:page', async (req, res) => {
 
   try {
     const result = await pool.query(`
-      SELECT pages.*
+      SELECT pages.*, categories.title AS category_title, categories.slug AS category_slug
       FROM pages
       JOIN categories ON pages.category_id = categories.id
       WHERE categories.slug = $1 AND pages.slug = $2
@@ -25,7 +25,17 @@ router.get('/:category/:page', async (req, res) => {
     const pageData = result.rows[0];
     const contentHtml = md.render(pageData.content);
 
-    res.render('knowledge-page', { page_content: contentHtml });
+    const breadcrumbs = [
+      { title: 'База знаний', url: '/' },
+      { title: pageData.category_title, url: `/${pageData.category_slug}` },
+      { title: pageData.title, url: null }
+    ];
+
+    res.render('knowledge-page', {
+      page_content: contentHtml,
+      page_title: pageData.title,
+      breadcrumbs
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send('Ошибка сервера');
@@ -50,10 +60,16 @@ router.get('/:category', async (req, res) => {
       [categoryData.id]
     );
 
+    const breadcrumbs = [
+      { title: 'База знаний', url: '/' },
+      { title: categoryData.title, url: null }
+    ];
+
     res.render('category-page', {
       category_title: categoryData.title,
       category_slug: categoryData.slug,
-      pages: pagesResult.rows
+      pages: pagesResult.rows,
+      breadcrumbs
     });
   } catch (err) {
     console.error(err);

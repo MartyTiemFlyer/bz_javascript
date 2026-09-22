@@ -142,34 +142,116 @@ body {
 
 
 /* =========================
-   Боковая панель */
+   Боковая панель
+   ========================= */
 
 .sidebar {
     width: 270px;
     flex-shrink: 0;
 
-    padding: 28px 18px;
+    padding: 28px 16px;
 
     background-color: #ffffff;
     border-right: 1px solid #e5e5e5;
+
+    max-height: calc(100vh - 72px);
+    overflow-y: auto;
 }
 
-.sidebar {
-  max-height: 100vh;
-  overflow-y: auto;
+
+/* =========================
+   Раздел
+   ========================= */
+
+.sidebar-section {
+    margin-bottom: 18px;
 }
 
-/* Заголовок боковой панели */
 
-.sidebar-title {
-    padding: 0 12px 18px;
+/* Название раздела */
 
-    font-size: 13px;
+.sidebar-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 9px 12px;
+
+    border-radius: 8px;
+
+    color: #222222;
+    text-decoration: none;
+
+    font-size: 15px;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
 
-    color: #777777;
+    transition: background-color 0.15s ease;
+}
+
+.sidebar-section-title:hover {
+    background-color: #f4f5f7;
+}
+
+
+/* Иконка раздела */
+
+.sidebar-section-title > span:first-child {
+    width: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
+}
+
+
+/* =========================
+   Страницы внутри раздела
+   ========================= */
+
+.sidebar-links {
+    margin-top: 4px;
+    margin-left: 23px;
+
+    padding-left: 13px;
+
+    border-left: 1px solid #e4e4e4;
+}
+
+
+/* Ссылка */
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 7px 10px;
+
+    border-radius: 7px;
+
+    color: #666666;
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.sidebar-link:hover {
+    background-color: #f4f5f7;
+    color: #111111;
+}
+
+
+/* Иконка страницы */
+
+.sidebar-link .page-icon {
+    font-size: 14px;
+    opacity: 0.75;
 }
 
 

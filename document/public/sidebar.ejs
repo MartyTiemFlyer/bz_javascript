@@ -7,12 +7,11 @@
         <span><%- section.icon %></span>
         <span><%= section.title %></span>
       </a>
-
       <% if (section.links.length > 0) { %>
         <div class="sidebar-links">
           <% section.links.forEach(function(link) { %>
-            <span class="page-icon">📄</span>
             <a href="/<%= section.slug %>/<%= link.slug %>" class="sidebar-link">
+              <span class="page-icon">📄</span>
               <%= link.title %>
             </a>
           <% }); %>
