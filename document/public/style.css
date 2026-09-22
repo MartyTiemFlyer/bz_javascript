@@ -154,6 +154,10 @@ body {
     border-right: 1px solid #e5e5e5;
 }
 
+.sidebar {
+  max-height: 100vh;
+  overflow-y: auto;
+}
 
 /* Заголовок боковой панели */
 

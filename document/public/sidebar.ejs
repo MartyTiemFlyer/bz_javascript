@@ -1,0 +1,23 @@
+<!-- sidebar.ejs -->
+<aside class="sidebar">
+  <% sidebarSections.forEach(function(section) { %>
+    <div class="sidebar-section">
+      <a href="/<%= section.slug %>" class="sidebar-section-title">
+        
+        <span><%- section.icon %></span>
+        <span><%= section.title %></span>
+      </a>
+
+      <% if (section.links.length > 0) { %>
+        <div class="sidebar-links">
+          <% section.links.forEach(function(link) { %>
+            <span class="page-icon">📄</span>
+            <a href="/<%= section.slug %>/<%= link.slug %>" class="sidebar-link">
+              <%= link.title %>
+            </a>
+          <% }); %>
+        </div>
+      <% } %>
+    </div>
+  <% }); %>
+</aside>

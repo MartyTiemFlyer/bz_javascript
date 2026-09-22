@@ -6,10 +6,10 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-const categoriesRouter = require('./routes/categories');
+// const categoriesRouter = require('./routes/categories');
 const tasksRouter = require('./routes/tasks');
 
-app.use('/categories', categoriesRouter);
+// app.use('/categories', categoriesRouter);
 app.use('/tasks', tasksRouter);
 module.exports = app;
 

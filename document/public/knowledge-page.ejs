@@ -1,3 +1,4 @@
+<!-- knowledge-page.ejs -->
 <!doctype html>
 <html lang="ru">
   <head>
@@ -32,73 +33,7 @@
 
     <div class="layout">
       <!--  Боковая панель    -->
-
-      <aside class="sidebar">
-        <div class="sidebar-title">База знаний</div>
-
-        <!-- Категория: Скрипты -->
-
-        <div class="category">
-          <a href="#" class="category-title">
-            <span class="category-icon">📜</span>
-            <span>Скрипты</span>
-          </a>
-
-          <div class="pages">
-            <a href="#" class="page-link">
-              <span class="page-icon">📄</span>
-              <span>Скрипт 1</span>
-            </a>
-
-            <a href="#" class="page-link">
-              <span class="page-icon">📄</span>
-              <span>Скрипт 2</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- Категория: Документация -->
-
-        <div class="category">
-          <a href="#" class="category-title">
-            <span class="category-icon">📚</span>
-            <span>Документация</span>
-          </a>
-
-          <div class="pages">
-            <a href="#" class="page-link">
-              <span class="page-icon">📄</span>
-              <span>Установка</span>
-            </a>
-
-            <a href="#" class="page-link">
-              <span class="page-icon">📄</span>
-              <span>Настройка проекта</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- Категория: Инструкции -->
-
-        <div class="category">
-          <a href="#" class="category-title">
-            <span class="category-icon">📋</span>
-            <span>Инструкции</span>
-          </a>
-
-          <div class="pages">
-            <a href="#" class="page-link">
-              <span class="page-icon">📄</span>
-              <span>Для разработчика</span>
-            </a>
-
-            <a href="#" class="page-link">
-              <span class="page-icon">📄</span>
-              <span>Для пользователя</span>
-            </a>
-          </div>
-        </div>
-      </aside>
+      <%- include('sidebar') %>
 
       <!--  Основное содержимое -->
       <main class="content">
@@ -118,21 +53,22 @@
             <div class="page-meta">
               Автор: Пользователь · Изменено: 16.09.2026
             </div>
-            <p class="author">Автор: <!--PAGE_AUTHOR--></p>
+            <p class="author">
+              Автор:
+              <!--PAGE_AUTHOR-->
+            </p>
           </div>
 
           <a href="#" class="edit-button"> ✏️ Редактировать </a>
         </div>
-        
+
         <!--==========================-->
         <!-- Основная область статьи-->
         <div class="page-layout">
           <!--    Содержание (нужно ли?)    -->
 
           <!--    Markdown → HTML  -->
-          <article class="markdown">
-            <%- page_content %>
-          </article>
+          <article class="markdown"><%- page_content %></article>
         </div>
       </main>
     </div>

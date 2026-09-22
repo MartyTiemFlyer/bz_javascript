@@ -6,20 +6,23 @@ const initTables = require('./backend/doc_db_init');
 initTables().catch(err => console.error('Error creating tables:', err));
 const pool = require('./backend/db_pool');
 const ejs = require('ejs');
+const attachSidebarData = require('./backend/sidebar_data');
+
+// Настройка вьюшек (если ещё не сделано в express_setting.js)
+app.set('views', path.join(__dirname, 'public'));
+app.set('view engine', 'ejs');
+
+// Подключаем сайдбар-данные ко всем страницам
+app.use(attachSidebarData);
+
 
 // Главная страница
 app.get('/', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM categories ORDER BY title');
 
-    ejs.renderFile(path.join(__dirname, 'public', 'index.ejs'), {
+    res.render('index', {
       categories: result.rows
-    }, (err, finalHtml) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send('Ошибка шаблона');
-      }
-      res.send(finalHtml);
     });
   } catch (err) {
     console.error(err);
@@ -35,6 +38,8 @@ app.get('/health', (req, res) => {
 app.get('/maintask', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'maintask.html'));
 });
+
+
 
 // Страницы базы знаний: /scripts/script-1, /documents/installation и т.д.
 app.use('/', pagesRouter);

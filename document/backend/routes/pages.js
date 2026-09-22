@@ -1,15 +1,12 @@
+//pages.js 
+// страница управляет маршрутизацией для страниц базы знаний, таких как /scripts/script-1
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
-const path = require('path');
-const ejs = require('ejs');
 const MarkdownIt = require('markdown-it');
 const md = new MarkdownIt();
 const pool = require('../db_pool');
 
-
-const TEMPLATE_PATH = path.join(__dirname, '..', '..', 'public', 'knowledge-page.ejs');
-
+// Отдельная страница: /scripts/script-1
 router.get('/:category/:page', async (req, res) => {
   const { category, page } = req.params;
 
@@ -28,23 +25,14 @@ router.get('/:category/:page', async (req, res) => {
     const pageData = result.rows[0];
     const contentHtml = md.render(pageData.content);
 
-    ejs.renderFile(TEMPLATE_PATH, { page_content: contentHtml }, (err, finalHtml) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send('Ошибка шаблона');
-      }
-      res.send(finalHtml);
-    });
+    res.render('knowledge-page', { page_content: contentHtml });
   } catch (err) {
     console.error(err);
     res.status(500).send('Ошибка сервера');
   }
 });
 
-
-// Список страниц внутри категории
-const CATEGORY_TEMPLATE_PATH = path.join(__dirname, '..', '..', 'public', 'category-page.ejs');
-
+// Список страниц внутри категории: /scripts
 router.get('/:category', async (req, res) => {
   const { category } = req.params;
 
@@ -62,16 +50,10 @@ router.get('/:category', async (req, res) => {
       [categoryData.id]
     );
 
-    ejs.renderFile(CATEGORY_TEMPLATE_PATH, {
+    res.render('category-page', {
       category_title: categoryData.title,
       category_slug: categoryData.slug,
       pages: pagesResult.rows
-    }, (err, finalHtml) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send('Ошибка шаблона');
-      }
-      res.send(finalHtml);
     });
   } catch (err) {
     console.error(err);
