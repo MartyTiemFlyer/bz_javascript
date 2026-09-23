@@ -19,10 +19,10 @@
         <span>База знаний</span>
       </a>
 
-      <div class="search">
-        <input type="text" placeholder="Поиск по базе знаний..." />
-      </div>
-
+      <form class="search" action="/search" method="GET">
+        <input type="text" name="q" placeholder="Поиск по базе знаний..." value="<%= typeof query !== 'undefined' ? query : '' %>" />
+      </form>
+      
       <a href="#" class="user">
         <span class="user-icon">👤</span>
         <span>Пользователь</span>

@@ -12,16 +12,15 @@
 
   <body>
     <!-- Шапка -->
-
     <header class="header">
       <a href="/" class="logo">
         <span class="logo-icon">📚</span>
-        <span>База знаний</span>
+        <span>База знаний ЦТС</span>
       </a>
 
-      <div class="search">
-        <input type="text" placeholder="Поиск по базе знаний..." />
-      </div>
+      <form class="search" action="/search" method="GET">
+        <input type="text" name="q" placeholder="Поиск по базе знаний..." value="<%= typeof query !== 'undefined' ? query : '' %>" />
+      </form>
 
       <a href="#" class="user">
         <span class="user-icon">👤</span>
@@ -42,7 +41,8 @@
 
         <!--          Заголовок страницы          -->
         <div class="page-header">
-          <div>
+          <!-- Левая часть: название и мета-инфо -->
+          <div class="page-header-info">
             <h1><%= page_title %></h1>
             <div class="page-meta">
               Автор: <%= page_author || 'Не указан' %> · Изменено: <%= new
@@ -50,21 +50,32 @@
             </div>
           </div>
 
-          <a href="#" class="edit-button"> ✏️ Редактировать </a>
-          <form
-            method="POST"
-            action="/edit/page/<%= page_category_slug %>/<%= page_slug %>/delete"
-            style="display: inline"
-            onsubmit="
-              return confirm(
-                'Удалить страницу «' +
-                  '<%= page_title %>' +
-                  '»? Это действие необратимо.',
-              );
-            "
-          >
-            <button type="submit" class="delete-button">🗑️ Удалить страницу</button>
-          </form>
+          <!-- Правая часть: кнопки управления страницей -->
+          <div class="page-header-actions">
+            <a
+              href="/edit/page/<%= page_category_slug %>/<%= page_slug %>"
+              class="edit-button"
+            >
+              ✏️ Редактировать
+            </a>
+
+            <form
+              method="POST"
+              action="/edit/page/<%= page_category_slug %>/<%= page_slug %>/delete"
+              style="display: inline"
+              onsubmit="
+                return confirm(
+                  'Удалить страницу «' +
+                    '<%= page_title %>' +
+                    '»? Это действие необратимо.',
+                );
+              "
+            >
+              <button type="submit" class="delete-button">
+                🗑️ Удалить страницу
+              </button>
+            </form>
+          </div>
         </div>
 
         <!--==========================-->

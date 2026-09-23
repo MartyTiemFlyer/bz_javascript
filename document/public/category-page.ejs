@@ -16,12 +16,12 @@
     <header class="header">
       <a href="/" class="logo">
         <span class="logo-icon">📚</span>
-        <span>База знаний</span>
+        <span>База знаний ЦТС</span>
       </a>
 
-      <div class="search">
-        <input type="text" placeholder="Поиск по базе знаний..." />
-      </div>
+      <form class="search" action="/search" method="GET">
+        <input type="text" name="q" placeholder="Поиск по базе знаний..." value="<%= typeof query !== 'undefined' ? query : '' %>" />
+      </form>
 
       <a href="#" class="user">
         <span class="user-icon">👤</span>
@@ -65,7 +65,7 @@
 
         <!--==========================-->
         <!-- Основная область статьи-->
-        <!--==========================-->
+    
         <!-- Список страниц категории -->
         <div class="page-layout">
           <% if (pages.length === 0) { %>

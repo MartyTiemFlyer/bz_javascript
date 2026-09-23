@@ -25,6 +25,14 @@ async function initTables() {
     )
   `);
   console.log('db_init: Table "pages" is ready');
+
+  await pool.query(`
+  CREATE INDEX IF NOT EXISTS idx_pages_search
+  ON pages
+  USING GIN (to_tsvector('russian', title || ' ' || content))
+`);
+console.log('doc_db_init: Search index is ready');
+
 }
 
 module.exports = initTables;

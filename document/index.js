@@ -8,6 +8,7 @@ const pool = require('./backend/db_pool');
 const ejs = require('ejs');
 const attachSidebarData = require('./backend/sidebar_data');
 const editRouter = require('./backend/routes/edit');
+const searchRouter = require('./backend/routes/search');
 
 
 // Настройка вьюшек (если ещё не сделано в express_setting.js)
@@ -16,7 +17,7 @@ app.set('view engine', 'ejs');
 
 // Подключаем сайдбар-данные ко всем страницам
 app.use(attachSidebarData);
-
+app.use('/search', searchRouter);
 
 // Главная страница
 app.get('/', async (req, res) => {

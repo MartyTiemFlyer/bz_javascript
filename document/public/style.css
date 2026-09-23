@@ -420,10 +420,8 @@ body {
 }
 
 
-/* Иконка перед ссылкой */
 
 .content a::before {
-    content: "📖";
 
     font-size: 18px;
 }
@@ -521,50 +519,57 @@ body {
 
 
 /* =========================
-   Кнопка редактирования
+   Кнопки редактирования и удаления
    ========================= */
-
-.edit-button {
+/* Кнопки редактирования и удаления */
+.content a.edit-button {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-
-    padding: 3px 6px;
-
-    border: 1px solid #dddddd;
+    background: #fff;
+    color: #082f84;
+    border: 1px solid #bfdbfe;
+    padding: 8px 14px;
     border-radius: 8px;
-
-    background-color: #ffffff;
-
-    color: #333333;
-    text-decoration: none;
-
     font-size: 13px;
     font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: none;
 }
 
-.edit-button:hover {
-    background-color: #f3f3f3;
+.content a.edit-button:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
 }
 
 .delete-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: #fff;
   color: #dc2626;
   border: 1px solid #fecaca;
   padding: 8px 14px;
   border-radius: 8px;
   font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
 }
 
 .delete-button:hover {
   background: #fef2f2;
+  border-color: #fca5a5;
 }
 
 .delete-disabled-hint {
+  display: inline-flex;
+  align-items: center;
   color: #9ca3af;
   font-size: 13px;
 }
+
+
 
 .error-banner {
   background: #fef2f2;
