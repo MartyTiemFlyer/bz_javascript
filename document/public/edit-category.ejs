@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= mode === 'create' ? 'Новая категория' : 'Редактирование категории' %></title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .edit-page-wrap {
+      max-width: 640px;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+
+    .edit-header {
+      margin-bottom: 32px;
+    }
+
+    .edit-header h1 {
+      font-size: 24px;
+      margin: 0 0 6px;
+    }
+
+    .edit-header p {
+      color: #6b7280;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .edit-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .field-hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .field-hint code {
+      background: #f3f4f6;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .icon-preview {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 18px;
+      margin-left: 8px;
+      vertical-align: middle;
+      background: #f9fafb;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .btn-primary {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: #4f46e5;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-secondary:hover {
+      background: #f9fafb;
+    }
+  </style>
+</head>
+<body>
+  <div class="edit-page-wrap">
+    <div class="edit-header">
+      <h1><%= mode === 'create' ? 'Новая категория' : `Редактирование: ${category.title}` %></h1>
+      <p>Категории объединяют похожие страницы базы знаний в один раздел.</p>
+    </div>
+
+    <div class="edit-card">
+      <form method="POST" action="<%= mode === 'create' ? '/edit/category/new' : `/edit/category/${category.slug}` %>">
+
+        <% if (mode === 'create') { %>
+          <div class="field">
+            <label for="slug">Slug (адрес категории)</label>
+            <input type="text" id="slug" name="slug" value="<%= category.slug %>" placeholder="Например: scripts" pattern="[a-z0-9\-]+" required />
+            <div class="field-hint">
+              Slug — это короткий адрес категории на латинице, из которого формируется URL страницы.
+              Например, если указать <code>scripts</code>, категория будет доступна по адресу
+              <code>/scripts</code>. Используйте только строчные латинские буквы, цифры и дефис,
+              без пробелов и русских букв — изменить его после создания будет сложно, так что
+              выбирайте сразу подходящий вариант.
+            </div>
+          </div>
+        <% } %>
+
+        <div class="field">
+          <label for="title">Название</label>
+          <input type="text" id="title" name="title" value="<%= category.title %>" placeholder="Например: Скрипты" required />
+        </div>
+
+        <div class="field">
+          <label for="icon">Иконка (эмодзи)</label>
+          <input type="text" id="icon" name="icon" value="<%= category.icon || '' %>" placeholder="📜" maxlength="10" />
+          <div class="field-hint">Отображается рядом с названием категории в сайдбаре и на главной странице.</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Сохранить</button>
+          <a href="/" class="btn-secondary">Отмена</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

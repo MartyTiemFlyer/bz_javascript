@@ -7,6 +7,8 @@ initTables().catch(err => console.error('Error creating tables:', err));
 const pool = require('./backend/db_pool');
 const ejs = require('ejs');
 const attachSidebarData = require('./backend/sidebar_data');
+const editRouter = require('./backend/routes/edit');
+
 
 // Настройка вьюшек (если ещё не сделано в express_setting.js)
 app.set('views', path.join(__dirname, 'public'));
@@ -41,6 +43,7 @@ app.get('/maintask', (req, res) => {
 
 
 
+app.use('/edit', editRouter); // editRouter для редактирования страниц базы знаний
 // Страницы базы знаний: /scripts/script-1, /documents/installation и т.д.
 app.use('/', pagesRouter);
 

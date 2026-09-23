@@ -43,14 +43,11 @@
         <!--          Заголовок страницы          -->
         <div class="page-header">
           <div>
-            <h1></h1>
+            <h1><%= page_title %></h1>
             <div class="page-meta">
-              Автор: Пользователь · Изменено: 16.09.2026
+              Автор: <%= page_author || 'Не указан' %> · Изменено: <%= new
+              Date(page_updated_at).toLocaleDateString('ru-RU') %>
             </div>
-            <p class="author">
-              Автор:
-              <!--PAGE_AUTHOR-->
-            </p>
           </div>
 
           <a href="#" class="edit-button"> ✏️ Редактировать </a>

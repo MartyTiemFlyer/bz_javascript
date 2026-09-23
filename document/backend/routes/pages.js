@@ -34,6 +34,8 @@ router.get('/:category/:page', async (req, res) => {
     res.render('knowledge-page', {
       page_content: contentHtml,
       page_title: pageData.title,
+      page_author: pageData.author,
+      page_updated_at: pageData.updated_at,
       breadcrumbs
     });
   } catch (err) {

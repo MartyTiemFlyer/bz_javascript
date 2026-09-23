@@ -1,5 +1,16 @@
 <!-- sidebar.ejs -->
 <aside class="sidebar">
+<!-- Кнопка создания -->
+<a href="/edit/category/new" class="create-category-button">
+  <span>＋</span>
+  <span>Новая категория</span>
+</a>
+<a href="/edit/page/new" class="create-page-button">
+  <span>＋</span>
+  <span>Новая страница</span>
+</a>
+
+  <!-- Секции боковой панели -->
   <% sidebarSections.forEach(function(section) { %>
     <div class="sidebar-section">
       <a href="/<%= section.slug %>" class="sidebar-section-title">

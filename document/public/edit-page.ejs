@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= mode === 'create' ? 'Новая страница' : 'Редактирование страницы' %></title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .edit-page-wrap {
+      max-width: 780px;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+
+    .edit-header {
+      margin-bottom: 32px;
+    }
+
+    .edit-header h1 {
+      font-size: 24px;
+      margin: 0 0 6px;
+    }
+
+    .edit-header p {
+      color: #6b7280;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .edit-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .field-row .field {
+      flex: 1;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      box-sizing: border-box;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    .field select {
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 380px;
+      line-height: 1.6;
+      font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+    }
+
+    .field-hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .field-hint code {
+      background: #f3f4f6;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .btn-primary {
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: #4f46e5;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-secondary:hover {
+      background: #f9fafb;
+    }
+  </style>
+</head>
+<body>
+  <div class="edit-page-wrap">
+    <div class="edit-header">
+      <h1><%= mode === 'create' ? 'Новая страница' : `Редактирование: ${page.title}` %></h1>
+      <p>Содержимое пишется в формате Markdown и автоматически превращается в оформленную страницу.</p>
+    </div>
+
+    <div class="edit-card">
+      <form method="POST" action="<%= mode === 'create' ? '/edit/page/new' : `/edit/page/${current_category_slug}/${page.slug}` %>">
+
+        <div class="field-row">
+          <div class="field">
+            <label for="category_id">Категория</label>
+            <select id="category_id" name="category_id" required>
+              <% categories.forEach(function(cat) { %>
+                <option value="<%= cat.id %>" <%= page.category_id === cat.id ? 'selected' : '' %>>
+                  <%= cat.title %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+
+          <% if (mode === 'create') { %>
+            <div class="field">
+              <label for="slug">Slug (адрес страницы)</label>
+              <input type="text" id="slug" name="slug" value="<%= page.slug %>" placeholder="script-1" pattern="[a-z0-9\-]+" required />
+            </div>
+          <% } %>
+        </div>
+
+        <% if (mode === 'create') { %>
+          <div class="field-hint" style="margin-top: -12px; margin-bottom: 20px;">
+            Slug — короткий адрес страницы на латинице, из которого формируется URL.
+            Например, <code>script-1</code> в категории <code>scripts</code> даст адрес
+            <code>/scripts/script-1</code>. Только строчные латинские буквы, цифры и дефис,
+            без пробелов и русских букв.
+          </div>
+        <% } %>
+
+        <div class="field">
+          <label for="title">Заголовок</label>
+          <input type="text" id="title" name="title" value="<%= page.title %>" placeholder="Скрипт 1" required />
+        </div>
+
+        <div class="field">
+          <label for="author">Автор</label>
+          <input type="text" id="author" name="author" value="<%= page.author || '' %>" placeholder="Иван Иванов" />
+        </div>
+
+        <div class="field">
+          <label for="content">Содержимое (Markdown)</label>
+          <textarea id="content" name="content" placeholder="# Заголовок&#10;&#10;Текст статьи..."><%= page.content %></textarea>
+          <div class="field-hint">
+            Пишите обычным текстом с разметкой Markdown: <code># Заголовок</code> — заголовок,
+            <code>**текст**</code> — жирный, <code>*текст*</code> — курсив, <code>- пункт</code> — список,
+            <code>[текст](url)</code> — ссылка. При сохранении текст автоматически превратится
+            в оформленную HTML-страницу.
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Сохранить</button>
+          <a href="/" class="btn-secondary">Отмена</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
