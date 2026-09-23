@@ -144,6 +144,13 @@
     </div>
 
     <div class="edit-card">
+      <div class="edit-card">
+        <% if (typeof error !== 'undefined' && error === 'has_pages') { %>
+          <div class="error-banner">
+            Нельзя удалить категорию, пока в ней есть страницы. Сначала удалите или перенесите их в другую категорию.
+          </div>
+        <% } %>
+      
       <form method="POST" action="<%= mode === 'create' ? '/edit/category/new' : `/edit/category/${category.slug}` %>">
 
         <% if (mode === 'create') { %>

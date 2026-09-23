@@ -51,6 +51,20 @@
           </div>
 
           <a href="#" class="edit-button"> ✏️ Редактировать </a>
+          <form
+            method="POST"
+            action="/edit/page/<%= page_category_slug %>/<%= page_slug %>/delete"
+            style="display: inline"
+            onsubmit="
+              return confirm(
+                'Удалить страницу «' +
+                  '<%= page_title %>' +
+                  '»? Это действие необратимо.',
+              );
+            "
+          >
+            <button type="submit" class="delete-button">🗑️ Удалить страницу</button>
+          </form>
         </div>
 
         <!--==========================-->

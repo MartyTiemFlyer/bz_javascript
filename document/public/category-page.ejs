@@ -43,19 +43,34 @@
 
         <!--          Заголовок страницы          -->
         <div class="page-header">
-          
+          <div>
+            <h1><%= category_title %></h1>
+          </div>
 
-          <a href="#" class="edit-button"> ✏️ Редактировать категорию </a>
-          <a href="#" class="delete-button"> 🗑️ Удалить категорию </a>
-        </div>
+            <div class="page-header-actions">
+                <a href="/edit/category/<%= category_slug %>" class="edit-button"> ✏️ Редактировать категорию </a>
+
+                <% if (pages.length === 0) { %>
+                  <form method="POST" action="/edit/category/<%= category_slug %>/delete" style="display: inline;" onsubmit="return confirm('Удалить категорию «' + '<%= category_title %>' + '»? Это действие необратимо.');">
+                    <button type="submit" class="delete-button">🗑️ Удалить категорию</button>
+                  </form>
+                <% } else { %>
+                  <span class="delete-disabled-hint" title="Сначала удалите или перенесите все страницы этой категории">
+                    🗑️ Удалить нельзя — в категории есть страницы
+                  </span>
+                <% } %>
+              </div>
+            </div>
+
 
         <!--==========================-->
         <!-- Основная область статьи-->
+        <!--==========================-->
+        <!-- Список страниц категории -->
         <div class="page-layout">
-          <!--    Содержание (нужно ли?)    -->
-
-          <!--    Markdown → HTML  -->
-          <article class="markdown">
+          <% if (pages.length === 0) { %>
+            <p class="empty-state">В этой категории пока нет страниц.</p>
+          <% } else { %>
             <ul class="page-list">
               <% pages.forEach(function(page) { %>
                 <li>
@@ -63,7 +78,7 @@
                 </li>
               <% }); %>
             </ul>
-          </article>
+          <% } %>
         </div>
       </main>
     </div>

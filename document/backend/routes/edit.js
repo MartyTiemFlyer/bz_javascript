@@ -41,6 +41,7 @@ router.get("/category/:slug", async (req, res) => {
     res.render("edit-category", {
       mode: "edit",
       category: result.rows[0],
+      error: req.query.error || null
     });
   } catch (err) {
     console.error(err);
@@ -157,6 +158,52 @@ router.post("/page/:category/:slug", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send("Ошибка сохранения страницы: 500");
+  }
+});
+
+// Удаление страницы
+router.post('/page/:category/:slug/delete', async (req, res) => {
+  const { category, slug } = req.params;
+  try {
+    await pool.query(`
+      DELETE FROM pages
+      WHERE category_id = (SELECT id FROM categories WHERE slug = $1) AND slug = $2
+    `, [category, slug]);
+
+    res.redirect(`/${category}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Ошибка удаления страницы');
+  }
+});
+
+// Удаление категории
+router.post('/category/:slug/delete', async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const categoryResult = await pool.query('SELECT id FROM categories WHERE slug = $1', [slug]);
+
+    if (categoryResult.rows.length === 0) {
+      return res.status(404).send('Категория не найдена');
+    }
+
+    const categoryId = categoryResult.rows[0].id;
+
+    const pagesCountResult = await pool.query(
+      'SELECT COUNT(*) FROM pages WHERE category_id = $1',
+      [categoryId]
+    );
+    const pagesCount = parseInt(pagesCountResult.rows[0].count, 10);
+
+    if (pagesCount > 0) {
+      return res.redirect(`/edit/category/${slug}?error=has_pages`);
+    }
+
+    await pool.query('DELETE FROM categories WHERE id = $1', [categoryId]);
+    res.redirect('/');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Ошибка удаления категории');
   }
 });
 
