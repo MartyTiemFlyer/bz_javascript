@@ -104,36 +104,32 @@ router.post("/page/new", async (req, res) => {
 });
 
 // Форма редактирования страницы
-router.get("/page/:category/:slug", async (req, res) => {
+router.get('/page/:category/:slug', async (req, res) => {
   const { category, slug } = req.params;
   try {
-    const result = await pool.query(
-      `
+    const result = await pool.query(`
       SELECT pages.*
       FROM pages
       JOIN categories ON pages.category_id = categories.id
       WHERE categories.slug = $1 AND pages.slug = $2
-    `,
-      [category, slug],
-    );
+    `, [category, slug]);
 
     if (result.rows.length === 0) {
-      return res.status(404).send("Страница не найдена");
+      return res.status(404).send('Страница не найдена');
     }
 
-    const categoriesResult = await pool.query(
-      "SELECT id, slug, title FROM categories ORDER BY title",
-    );
+    const categoriesResult = await pool.query('SELECT id, slug, title FROM categories ORDER BY title');
 
-    res.render("edit-page", {
-      mode: "edit",
+    res.render('edit-page', {
+      mode: 'edit',
       page: result.rows[0],
       categories: categoriesResult.rows,
       current_category_slug: category,
+      error: req.query.error || null
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Ошибка сервера: 500");
+    res.status(500).send('Ошибка сервера');
   }
 });
 

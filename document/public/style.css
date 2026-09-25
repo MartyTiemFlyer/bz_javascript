@@ -735,3 +735,15 @@ body {
 .create-category-button:hover {
     background-color: #eeeeee;
 }
+
+.user-logout-form {
+  display: inline-flex;
+  margin: 0;
+}
+
+.user-logout-form button.user {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+}

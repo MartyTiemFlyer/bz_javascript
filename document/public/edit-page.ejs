@@ -158,7 +158,14 @@
 
     <div class="edit-card">
       <form method="POST" action="<%= mode === 'create' ? '/edit/page/new' : `/edit/page/${current_category_slug}/${page.slug}` %>">
-
+        <!-- Конфликт одновременных изменений -->
+        <% if (typeof error !== 'undefined' && error === 'conflict') { %>
+        <div class="error-banner">
+          Пока вы редактировали, кто-то другой уже сохранил изменения этой страницы.
+          Ваши правки не сохранены — откройте страницу заново и внесите их снова.
+        </div>
+      <% } %>
+      
         <div class="field-row">
           <div class="field">
             <label for="category_id">Категория</label>
@@ -186,6 +193,10 @@
             <code>/scripts/script-1</code>. Только строчные латинские буквы, цифры и дефис,
             без пробелов и русских букв.
           </div>
+        <% } %>
+
+        <% if (mode === 'edit') { %>
+          <input type="hidden" name="expected_updated_at" value="<%= page.updated_at.toISOString() %>" />
         <% } %>
 
         <div class="field">

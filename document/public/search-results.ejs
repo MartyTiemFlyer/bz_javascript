@@ -17,9 +17,19 @@
         <input type="text" name="q" placeholder="Поиск по базе знаний..." value="<%= typeof query !== 'undefined' ? query : '' %>" />
       </form>
 
-      <a href="#" class="user">
-        <span class="user-icon">👤</span>
-        <span>Пользователь</span>
+      <% if (isAuthenticated) { %>
+        <form method="POST" action="/logout" class="user-logout-form">
+          <button type="submit" class="user">
+            <span class="user-icon">👤</span>
+            <span>Выйти</span>
+          </button>
+        </form>
+      <% } else { %>
+        <a href="/login" class="user">
+          <span class="user-icon">👤</span>
+          <span>Войти для редактирования</span>
+        </a>
+      <% } %>
       </a>
     </header>
 

@@ -1,0 +1,31 @@
+<!-- -->
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Вход</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="edit-page-wrap" style="max-width: 400px;">
+    <div class="edit-card">
+      <h1 style="font-size: 20px; margin-bottom: 20px;">Вход для редактирования</h1>
+
+      <% if (error) { %>
+        <div class="error-banner"><%= error %></div>
+      <% } %>
+
+      <form method="POST" action="/login">
+        <input type="hidden" name="redirect" value="<%= redirect %>" />
+        <div class="field">
+          <label for="password">Пароль</label>
+          <input type="password" id="password" name="password" required autofocus />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Войти</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
