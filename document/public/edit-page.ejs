@@ -6,10 +6,50 @@
   <title><%= mode === 'create' ? 'Новая страница' : 'Редактирование страницы' %></title>
   <link rel="stylesheet" href="/style.css">
   <style>
-    .edit-page-wrap {
-      max-width: 780px;
+      .edit-page-wrap {
+      max-width: 1400px;  
       margin: 48px auto;
       padding: 0 24px;
+    }
+
+    .editor-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .editor-pane-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+
+    .editor-split .field textarea {
+      height: 560px;
+      min-height: 560px;
+      resize: none;
+    }
+
+    .preview-box {
+      height: 560px;
+      overflow-y: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px 20px;
+      background: #fff;
+      box-sizing: border-box;
+    }
+
+    .preview-empty {
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .editor-split { grid-template-columns: 1fr; }
     }
 
     .edit-header {
@@ -209,15 +249,26 @@
           <input type="text" id="author" name="author" value="<%= page.author || '' %>" placeholder="Иван Иванов" />
         </div>
 
-        <div class="field">
-          <label for="content">Содержимое (Markdown)</label>
-          <textarea id="content" name="content" placeholder="# Заголовок&#10;&#10;Текст статьи..."><%= page.content %></textarea>
-          <div class="field-hint">
-            Пишите обычным текстом с разметкой Markdown: <code># Заголовок</code> — заголовок,
-            <code>**текст**</code> — жирный, <code>*текст*</code> — курсив, <code>- пункт</code> — список,
-            <code>[текст](url)</code> — ссылка. При сохранении текст автоматически превратится
-            в оформленную HTML-страницу.
+        <div class="editor-split">
+          <div class="field">
+            <div class="editor-pane-title">Markdown</div>
+            <textarea id="content" name="content" placeholder="# Заголовок&#10;&#10;Текст статьи..."><%= page.content %></textarea>
           </div>
+        
+          <div class="field">
+            <div class="editor-pane-title">Предпросмотр</div>
+            <div class="preview-box">
+              <article class="markdown" id="preview"></article>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-hint">
+          Пишите обычным текстом с разметкой Markdown: <code># Заголовок</code> — заголовок
+          (после <code>#</code> нужен пробел), <code>**текст**</code> — жирный, <code>*текст*</code> — курсив,
+          <code>- пункт</code> — список, <code>[текст](url)</code> — ссылка.
+        <br>см. <a href="https://gist.github.com/Jekins/2bf2d0638163f1294637" target="_blank">руководство по Markdown</a> для справки.
+        <br>
         </div>
 
         <div class="form-actions">
@@ -227,5 +278,31 @@
       </form>
     </div>
   </div>
+  <script src="/vendor/markdown-it/browser/markdown-it.umd.min.js"></script>
+<script>
+  const md = window.markdownit(); 
+  const textarea = document.getElementById('content');
+  const preview = document.getElementById('preview');
+
+  function renderPreview() {
+    const text = textarea.value.trim();
+
+    preview.innerHTML = text
+      ? md.render(textarea.value)
+      : '<p class="preview-empty">Здесь появится результат по мере ввода…</p>';
+  }
+
+  let renderTimer;
+
+  textarea.addEventListener('input', () => {
+    clearTimeout(renderTimer);
+
+    renderTimer = setTimeout(() => {
+      renderPreview();
+    }, 200); // 200 мс после последнего нажатия выполняется рендер
+  });
+
+  renderPreview(); // сразу показать текущий текст при открытии редактирования
+</script>
 </body>
 </html>

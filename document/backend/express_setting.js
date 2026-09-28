@@ -8,6 +8,14 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true })); 
 
+// Подключение статических файлов для markdown-it
+const path = require('path');
+app.use('/vendor/markdown-it', express.static(
+  path.join(__dirname, '..', 'node_modules', 'markdown-it', 'dist')
+  
+));
+console.log('markdown-it dist path:', path.join(__dirname, '..', 'node_modules', 'markdown-it', 'dist'));
+
 // Настройка сессий
 app.use(session({
   secret: process.env.SESSION_SECRET,

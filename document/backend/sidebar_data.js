@@ -31,7 +31,7 @@ async function attachSidebarData(req, res, next) {
 
     next();
   } catch (err) {
-    //console.error('>>> sidebar middleware error:', err);
+    console.error('>>> sidebar middleware error:', err);
     next(err);
   }
 }
