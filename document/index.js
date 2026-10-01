@@ -49,12 +49,13 @@ app.get('/maintask', (req, res) => {
 const authRouter = require('./backend/routes/auth');
 const requireAuth = require('./backend/middleware/require_auth');
 const editRouter = require('./backend/routes/edit');
+const uploadsRouter = require('./backend/routes/uploads');
 
-app.use('/', authRouter);
-app.use('/', pagesRouter);
-
+app.use('/', authRouter); 
 app.use('/edit', requireAuth, editRouter);  // editRouter для редактирования страниц базы знаний
+app.use('/api/uploads', requireAuth, uploadsRouter); // Маршрут для загрузки файлов, защищённый аутентификацией
 app.use('/', pagesRouter); // Страницы базы знаний: /scripts/script-1, /documents/installation и т.д.
+
 
 // Подключение и лог
 const PORT = process.env.PORT || 3000;

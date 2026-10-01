@@ -747,3 +747,19 @@ body {
   cursor: pointer;
   font: inherit;
 }
+
+.attach-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.attach-status {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.attach-status.error {
+  color: #dc2626;
+}

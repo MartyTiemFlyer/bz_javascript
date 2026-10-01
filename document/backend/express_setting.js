@@ -16,6 +16,8 @@ app.use('/vendor/markdown-it', express.static(
 ));
 console.log('markdown-it dist path:', path.join(__dirname, '..', 'node_modules', 'markdown-it', 'dist'));
 
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
 // Настройка сессий
 app.use(session({
   secret: process.env.SESSION_SECRET,

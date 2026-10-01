@@ -249,6 +249,14 @@
           <input type="text" id="author" name="author" value="<%= page.author || '' %>" placeholder="Иван Иванов" />
         </div>
 
+        <% if (mode === 'edit') { %>
+        <div class="attach-bar">
+          <button type="button" id="attach-file-btn" class="btn-secondary">📎 Прикрепить файл</button>
+          <input type="file" id="attach-file-input" style="display: none;" />
+          <span id="attach-status" class="attach-status"></span>
+        </div>
+      <% } %>
+
         <div class="editor-split">
           <div class="field">
             <div class="editor-pane-title">Markdown</div>
@@ -304,5 +312,76 @@
 
   renderPreview(); // сразу показать текущий текст при открытии редактирования
 </script>
+
+<% if (mode === 'edit') { %>
+<script>
+  const attachBtn = document.getElementById('attach-file-btn');
+  const attachInput = document.getElementById('attach-file-input');
+  const attachStatus = document.getElementById('attach-status');
+  const pageId = <%= page.id %>;
+
+  const IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'];
+
+  attachBtn.addEventListener('click', () => {
+    attachInput.click();
+  });
+
+  attachInput.addEventListener('change', async () => {
+    const file = attachInput.files[0];
+    if (!file) return;
+
+    attachStatus.textContent = 'Загрузка...';
+    attachStatus.classList.remove('error');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(`/api/uploads/${pageId}`, {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        attachStatus.textContent = data.error || 'Ошибка загрузки';
+        attachStatus.classList.add('error');
+        return;
+      }
+
+      insertAtCursor(data.url, data.filename);
+      attachStatus.textContent = `Прикреплено: ${data.filename}`;
+    } catch (err) {
+      attachStatus.textContent = 'Ошибка сети';
+      attachStatus.classList.add('error');
+    } finally {
+      attachInput.value = '';
+    }
+  });
+
+  function insertAtCursor(url, filename) {
+    const ext = url.slice(url.lastIndexOf('.')).toLowerCase();
+    const isImage = IMAGE_EXTENSIONS.includes(ext);
+    const markdown = isImage
+      ? `![${filename}](${url})`
+      : `[${filename}](${url})`;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const before = textarea.value.slice(0, start);
+    const after = textarea.value.slice(end);
+
+    textarea.value = `${before}${markdown}${after}`;
+
+    const newCursorPos = start + markdown.length;
+    textarea.selectionStart = newCursorPos;
+    textarea.selectionEnd = newCursorPos;
+    textarea.focus();
+
+    renderPreview(); // обновляем предпросмотр сразу после вставки
+  }
+</script>
+<% } %>
 </body>
 </html>
