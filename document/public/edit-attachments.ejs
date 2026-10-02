@@ -1,0 +1,246 @@
+<!-- edit-attachments.ejs -->
+ <!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Все файлы</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .files-wrap {
+      max-width: 1000px;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+
+    .files-header {
+      margin-bottom: 24px;
+    }
+
+    .files-header h1 {
+      font-size: 24px;
+      margin: 0 0 6px;
+    }
+
+    .files-header p {
+      color: #6b7280;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .files-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .files-table th {
+      text-align: left;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #6b7280;
+      padding: 12px 16px;
+      background: #f9fafb;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .files-table td {
+      padding: 12px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
+    }
+
+    .files-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .file-page-link {
+      color: #6366f1;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .file-page-link:hover {
+      text-decoration: underline;
+    }
+
+    .file-meta {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .delete-confirm-row {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .delete-confirm-row.visible {
+      display: flex;
+    }
+
+    .delete-trigger-btn {
+      background: none;
+      border: none;
+      color: #dc2626;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .delete-trigger-btn:hover {
+      text-decoration: underline;
+    }
+
+    .delete-confirm-text {
+      font-size: 12px;
+      color: #991b1b;
+    }
+
+    .delete-confirm-yes {
+      background: #dc2626;
+      color: #fff;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .delete-confirm-no {
+      background: #fff;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Шапка -->
+
+    <header class="header">
+      <a href="/" class="logo">
+        <span class="logo-icon">📚</span>
+        <span>База знаний ЦТС</span>
+      </a>
+
+      <form class="search" action="/search" method="GET">
+        <input type="text" name="q" placeholder="Поиск по базе знаний..." value="<%= typeof query !== 'undefined' ? query : '' %>" />
+      </form>
+
+      <% if (isAuthenticated) { %>
+        <form method="POST" action="/logout" class="user-logout-form">
+          <button type="submit" class="user">
+            <span class="user-icon">👤</span>
+            <span>Выйти</span>
+          </button>
+        </form>
+      <% } else { %>
+        <a href="/login" class="user">
+          <span class="user-icon">👤</span>
+          <span>Войти для редактирования</span>
+        </a>
+      <% } %>
+    </header>
+
+
+
+  <div class="files-wrap">
+    
+    <div class="files-header">
+      <h1>Все прикреплённые файлы</h1>
+      <p>Файлы, загруженные во все страницы базы знаний, отсортированы по дате добавления.</p>
+    </div>
+
+    <% if (attachments.length === 0) { %>
+      <div class="files-table">
+        <p class="empty-state">Пока ничего не загружено.</p>
+      </div>
+    <% } else { %>
+      <table class="files-table">
+        <thead>
+          <tr>
+            <th>Файл</th>
+            <th>Страница</th>
+            <th>Размер</th>
+            <th>Добавлен (МСК)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% attachments.forEach(function(a) { %>
+            <tr data-attachment-id="<%= a.id %>">
+              <td><%= a.original_filename %></td>
+              <td>
+                <a href="/<%= a.category_slug %>/<%= a.page_slug %>" class="file-page-link" target="_blank">
+                  <%= a.page_title %>
+                </a>
+              </td>
+              <td class="file-meta"><%= Math.round(a.size / 1024) %> КБ</td>
+              <td class="file-meta"><%= new Date(a.uploaded_at).toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' }) %></td>
+              <td>
+                <button type="button" class="delete-trigger-btn">Удалить</button>
+                <div class="delete-confirm-row">
+                  <span class="delete-confirm-text">Точно удалить?</span>
+                  <button type="button" class="delete-confirm-yes" data-id="<%= a.id %>">Да</button>
+                  <button type="button" class="delete-confirm-no">Нет</button>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <script>
+    document.querySelectorAll('tr[data-attachment-id]').forEach(row => {
+      const triggerBtn = row.querySelector('.delete-trigger-btn');
+      const confirmRow = row.querySelector('.delete-confirm-row');
+      const yesBtn = row.querySelector('.delete-confirm-yes');
+      const noBtn = row.querySelector('.delete-confirm-no');
+
+      triggerBtn.addEventListener('click', () => {
+        triggerBtn.style.display = 'none';
+        confirmRow.classList.add('visible');
+      });
+
+      noBtn.addEventListener('click', () => {
+        confirmRow.classList.remove('visible');
+        triggerBtn.style.display = 'inline';
+      });
+
+      yesBtn.addEventListener('click', async () => {
+        const id = yesBtn.dataset.id;
+
+        try {
+          const response = await fetch(`/api/uploads/${id}/delete`, { method: 'POST' });
+          const data = await response.json();
+
+          if (response.ok) {
+            row.remove();
+          } else {
+            alert(data.error || 'Ошибка удаления');
+          }
+        } catch (err) {
+          alert('Ошибка сети');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

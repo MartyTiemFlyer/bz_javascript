@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../upload');
 const pool = require('../db_pool');
+const fs = require('fs');
+const path = require('path');
 
 // Загрузка файла, привязанного к странице
 router.post('/:page_id', upload.single('file'), async (req, res) => {
@@ -27,6 +29,37 @@ router.post('/:page_id', upload.single('file'), async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Ошибка загрузки файла' });
+  }
+});
+
+
+// Удаление файла — из базы, и с диска
+router.post('/:attachment_id/delete', async (req, res) => {
+  const { attachment_id } = req.params;
+
+  try {
+    const result = await pool.query(
+      'SELECT stored_filename FROM attachments WHERE id = $1',
+      [attachment_id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Файл не найден' });
+    }
+
+    const { stored_filename } = result.rows[0];
+    const filePath = path.join(__dirname, '..', '..', 'uploads', stored_filename);
+
+    await pool.query('DELETE FROM attachments WHERE id = $1', [attachment_id]);
+
+    fs.unlink(filePath, (err) => {
+      if (err) console.error('Не удалось удалить файл с диска:', err);
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Ошибка удаления файла' });
   }
 });
 

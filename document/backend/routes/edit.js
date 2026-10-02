@@ -203,4 +203,30 @@ router.post('/category/:slug/delete', async (req, res) => {
   }
 });
 
+// ===== Список файлов =====
+router.get('/attachments', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        attachments.id,
+        attachments.original_filename,
+        attachments.stored_filename,
+        attachments.size,
+        attachments.uploaded_at,
+        pages.slug AS page_slug,
+        pages.title AS page_title,
+        categories.slug AS category_slug
+      FROM attachments
+      JOIN pages ON pages.id = attachments.page_id
+      JOIN categories ON categories.id = pages.category_id
+      ORDER BY attachments.uploaded_at DESC
+    `);
+
+    res.render('edit-attachments', { attachments: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Ошибка сервера');
+  }
+});
+
 module.exports = router;
