@@ -1,31 +1,244 @@
-<!-- -->
 <!doctype html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Вход</title>
-  <link rel="stylesheet" href="/style.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Arial, sans-serif;
+
+      background:
+        radial-gradient(circle at top left, #eef4ff 0, transparent 38%),
+        radial-gradient(circle at bottom right, #f2f0ff 0, transparent 35%),
+        #f6f7fb;
+
+      color: #1f2937;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
+    }
+
+    .edit-page-wrap {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .edit-card {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid #e6e9f0;
+      border-radius: 16px;
+      padding: 32px;
+
+      box-shadow:
+        0 20px 50px rgba(30, 41, 59, 0.08),
+        0 4px 12px rgba(30, 41, 59, 0.04);
+    }
+
+    .login-icon {
+      width: 46px;
+      height: 46px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      margin-bottom: 20px;
+
+      border-radius: 12px;
+      background: #eef4ff;
+      color: #3b6fd8;
+
+      font-size: 21px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+
+      font-size: 22px;
+      line-height: 1.3;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+
+      color: #182230;
+    }
+
+    .login-description {
+      margin: 0 0 26px;
+
+      font-size: 14px;
+      line-height: 1.5;
+      color: #697386;
+    }
+
+    .error-banner {
+      margin-bottom: 20px;
+      padding: 11px 13px;
+
+      border: 1px solid #fecaca;
+      border-radius: 9px;
+
+      background: #fef2f2;
+      color: #b42318;
+
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .field {
+      margin-bottom: 22px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .field input {
+      width: 100%;
+      height: 44px;
+
+      padding: 0 13px;
+
+      border: 1px solid #d8dde7;
+      border-radius: 9px;
+
+      outline: none;
+
+      background: #fff;
+      color: #1f2937;
+
+      font-size: 14px;
+
+      transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .field input:hover {
+      border-color: #b8c0ce;
+    }
+
+    .field input:focus {
+      border-color: #5b82d6;
+
+      box-shadow:
+        0 0 0 3px rgba(91, 130, 214, 0.14);
+    }
+
+    .form-actions {
+      margin-top: 4px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      height: 44px;
+
+      border: 0;
+      border-radius: 9px;
+
+      background: #3f6fd5;
+      color: #fff;
+
+      font-size: 14px;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition:
+        background 0.15s ease,
+        transform 0.1s ease,
+        box-shadow 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      background: #3564c8;
+      box-shadow: 0 5px 14px rgba(63, 111, 213, 0.22);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px;
+      }
+
+      .edit-card {
+        padding: 26px 22px;
+        border-radius: 14px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <div class="edit-page-wrap" style="max-width: 400px;">
+
+  <div class="edit-page-wrap">
+
     <div class="edit-card">
-      <h1 style="font-size: 20px; margin-bottom: 20px;">Вход для редактирования</h1>
+
+      <div class="login-icon">🔐</div>
+
+      <h1>Вход для редактирования</h1>
+
+      <p class="login-description">
+        Введите пароль, чтобы получить доступ к редактированию материалов.
+      </p>
 
       <% if (error) { %>
         <div class="error-banner"><%= error %></div>
       <% } %>
 
       <form method="POST" action="/login">
-        <input type="hidden" name="redirect" value="<%= redirect %>" />
+
+        <input
+          type="hidden"
+          name="redirect"
+          value="<%= redirect %>"
+        />
+
         <div class="field">
           <label for="password">Пароль</label>
-          <input type="password" id="password" name="password" required autofocus />
+
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            autofocus
+            autocomplete="current-password"
+          />
         </div>
+
         <div class="form-actions">
-          <button type="submit" class="btn-primary">Войти</button>
+          <button type="submit" class="btn-primary">
+            Войти
+          </button>
         </div>
+
       </form>
+
     </div>
+
   </div>
+
 </body>
 </html>
