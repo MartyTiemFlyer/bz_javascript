@@ -1,3 +1,4 @@
+// upload.js - Настройка multer для загрузки файлов
 const multer = require('multer');
 const crypto = require('crypto');
 const path = require('path');

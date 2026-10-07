@@ -1,11 +1,27 @@
 //pages.js
 // страница управляет маршрутизацией для страниц базы знаний, таких как /scripts/script-1
+// --------------------------------------------------------------------------
 const express = require("express");
 const router = express.Router();
 const MarkdownIt = require("markdown-it");
 const md = new MarkdownIt();
+// Настройка рендеринга изображений с поддержкой параметра #w=width
+const defaultImage = md.renderer.rules.image;
+md.renderer.rules.image = (tokens, idx, options, env, self) => {
+  const token = tokens[idx];
+  const src = token.attrGet("src") || "";
+  const m = src.match(/#w=(\d+)$/);
+  if (m) {
+    token.attrSet("src", src.replace(/#w=\d+$/, ""));
+    token.attrSet("width", m[1]);
+  }
+  return defaultImage
+    ? defaultImage(tokens, idx, options, env, self)
+    : self.renderToken(tokens, idx, options);
+};
 const pool = require("../db_pool");
 
+// --------------------------------------------------------------------------
 // Отдельная страница: /scripts/script-1
 router.get("/:category/:page", async (req, res) => {
   const { category, page } = req.params;

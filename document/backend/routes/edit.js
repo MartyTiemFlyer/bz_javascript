@@ -41,7 +41,7 @@ router.get("/category/:slug", async (req, res) => {
     res.render("edit-category", {
       mode: "edit",
       category: result.rows[0],
-      error: req.query.error || null
+      error: req.query.error || null,
     });
   } catch (err) {
     console.error(err);
@@ -84,13 +84,31 @@ router.get("/page/new", async (req, res) => {
 router.post("/page/new", async (req, res) => {
   const { slug, title, author, content, category_id } = req.body;
   try {
-    await pool.query(
+    const insertResult = await pool.query(
       `
       INSERT INTO pages (category_id, slug, title, author, content)
       VALUES ($1, $2, $3, $4, $5)
+      RETURNING id
     `,
       [category_id, slug, title, author, content],
     );
+    const newPageId = insertResult.rows[0].id;
+
+    // Привязываем к странице файлы, ссылки на которые есть в тексте
+    const names = [
+      ...content.matchAll(/\/uploads\/([a-f0-9]{32}\.[a-z0-9]+)/gi),
+    ].map((m) => m[1].toLowerCase());
+
+    if (names.length > 0) {
+      await pool.query(
+        `
+        UPDATE attachments
+        SET page_id = $1
+        WHERE stored_filename = ANY($2) AND page_id IS NULL
+      `,
+        [newPageId, names],
+      );
+    }
 
     const categoryResult = await pool.query(
       "SELECT slug FROM categories WHERE id = $1",
@@ -98,38 +116,69 @@ router.post("/page/new", async (req, res) => {
     );
     res.redirect(`/${categoryResult.rows[0].slug}/${slug}`);
   } catch (err) {
+    // 23505 = нарушение уникальности: такой slug уже есть в этой категории
+    if (
+      err.code === "23505" &&
+      err.constraint === "pages_category_id_slug_key"
+    ) {
+      try {
+        const categoriesResult = await pool.query(
+          "SELECT id, slug, title FROM categories ORDER BY title",
+        );
+        return res.render("edit-page", {
+          mode: "create",
+          page: {
+            slug,
+            title,
+            author,
+            content,
+            category_id: Number(category_id),
+          },
+          categories: categoriesResult.rows,
+          current_category_slug: null,
+          error: "duplicate",
+        });
+      } catch (renderErr) {
+        console.error(renderErr);
+      }
+    }
     console.error(err);
     res.status(500).send("Ошибка сохранения страницы");
   }
 });
 
 // Форма редактирования страницы
-router.get('/page/:category/:slug', async (req, res) => {
+router.get("/page/:category/:slug", async (req, res) => {
   const { category, slug } = req.params;
   try {
-    const result = await pool.query(`
+    const result = await pool.query(
+      `
       SELECT pages.*
       FROM pages
       JOIN categories ON pages.category_id = categories.id
       WHERE categories.slug = $1 AND pages.slug = $2
-    `, [category, slug]);
+    `,
+      [category, slug],
+    );
 
     if (result.rows.length === 0) {
-      return res.status(404).send('Страница не найдена');
+      return res.status(404).send("Страница не найдена");
     }
 
-    const categoriesResult = await pool.query('SELECT id, slug, title FROM categories ORDER BY title');
+    const categoriesResult = await pool.query(
+      "SELECT id, slug, title FROM categories ORDER BY title",
+    );
 
-    res.render('edit-page', {
-      mode: 'edit',
+    res.render("edit-page", {
+      mode: "edit",
       page: result.rows[0],
       categories: categoriesResult.rows,
       current_category_slug: category,
-      error: req.query.error || null
+      error: req.query.error || null,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Ошибка сервера');
+    res.status(500).send("Ошибка сервера");
   }
 });
 
@@ -158,36 +207,42 @@ router.post("/page/:category/:slug", async (req, res) => {
 });
 
 // Удаление страницы
-router.post('/page/:category/:slug/delete', async (req, res) => {
+router.post("/page/:category/:slug/delete", async (req, res) => {
   const { category, slug } = req.params;
   try {
-    await pool.query(`
+    await pool.query(
+      `
       DELETE FROM pages
       WHERE category_id = (SELECT id FROM categories WHERE slug = $1) AND slug = $2
-    `, [category, slug]);
+    `,
+      [category, slug],
+    );
 
     res.redirect(`/${category}`);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Ошибка удаления страницы');
+    res.status(500).send("Ошибка удаления страницы");
   }
 });
 
 // Удаление категории
-router.post('/category/:slug/delete', async (req, res) => {
+router.post("/category/:slug/delete", async (req, res) => {
   const { slug } = req.params;
   try {
-    const categoryResult = await pool.query('SELECT id FROM categories WHERE slug = $1', [slug]);
+    const categoryResult = await pool.query(
+      "SELECT id FROM categories WHERE slug = $1",
+      [slug],
+    );
 
     if (categoryResult.rows.length === 0) {
-      return res.status(404).send('Категория не найдена');
+      return res.status(404).send("Категория не найдена");
     }
 
     const categoryId = categoryResult.rows[0].id;
 
     const pagesCountResult = await pool.query(
-      'SELECT COUNT(*) FROM pages WHERE category_id = $1',
-      [categoryId]
+      "SELECT COUNT(*) FROM pages WHERE category_id = $1",
+      [categoryId],
     );
     const pagesCount = parseInt(pagesCountResult.rows[0].count, 10);
 
@@ -195,16 +250,16 @@ router.post('/category/:slug/delete', async (req, res) => {
       return res.redirect(`/edit/category/${slug}?error=has_pages`);
     }
 
-    await pool.query('DELETE FROM categories WHERE id = $1', [categoryId]);
-    res.redirect('/');
+    await pool.query("DELETE FROM categories WHERE id = $1", [categoryId]);
+    res.redirect("/");
   } catch (err) {
     console.error(err);
-    res.status(500).send('Ошибка удаления категории');
+    res.status(500).send("Ошибка удаления категории");
   }
 });
 
 // ===== Список файлов =====
-router.get('/attachments', async (req, res) => {
+router.get("/attachments", async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT
@@ -222,10 +277,10 @@ router.get('/attachments', async (req, res) => {
       ORDER BY attachments.uploaded_at DESC
     `);
 
-    res.render('edit-attachments', { attachments: result.rows });
+    res.render("edit-attachments", { attachments: result.rows });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Ошибка сервера');
+    res.status(500).send("Ошибка сервера");
   }
 });
 

@@ -37,7 +37,7 @@ console.log('doc_db_init: Search index is ready');
 await pool.query(`
   CREATE TABLE IF NOT EXISTS attachments (
     id SERIAL PRIMARY KEY,
-    page_id INTEGER NOT NULL REFERENCES pages(id) ON DELETE CASCADE,
+    page_id INTEGER REFERENCES pages(id) ON DELETE CASCADE,
     original_filename VARCHAR(255) NOT NULL,
     stored_filename VARCHAR(255) UNIQUE NOT NULL,
     size INTEGER NOT NULL,

@@ -1,3 +1,4 @@
+// uploads.js - Роуты для загрузки и удаления файлов, привязанных к страницам
 const express = require('express');
 const router = express.Router();
 const upload = require('../upload');
@@ -12,7 +13,8 @@ router.post('/:page_id', upload.single('file'), async (req, res) => {
       return res.status(400).json({ error: 'Файл не получен' });
     }
 
-    const { page_id } = req.params;
+    // для новой страницы клиент присылает "new", страницы ещё нет, поэтому NULL
+    const page_id = req.params.page_id === 'new' ? null : req.params.page_id;
 
     // Исправляем кодировку имени файла (multer декодирует как latin1)
     const originalFilename = Buffer.from(req.file.originalname, 'latin1').toString('utf8');

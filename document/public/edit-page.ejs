@@ -187,6 +187,22 @@
     .btn-secondary:hover {
       background: #f9fafb;
     }
+
+    .preview-box { position: relative; }
+    .markdown img { max-width: 100%; height: auto; }
+
+    .preview-hint { font-size: 12px; color: #9ca3af; margin: -2px 0 8px; }
+
+    .img-resizer { display: none; position: absolute; border: 1px solid #6366f1; pointer-events: none; }
+    .img-handle { position: absolute; width: 9px; height: 9px; background: #fff;
+      border: 1px solid #6366f1; pointer-events: auto; }
+    .img-handle.nw { left: -5px;  top: -5px;    cursor: nwse-resize; }
+    .img-handle.ne { right: -5px; top: -5px;    cursor: nesw-resize; }
+    .img-handle.se { right: -5px; bottom: -5px; cursor: nwse-resize; }
+    .img-handle.sw { left: -5px;  bottom: -5px; cursor: nesw-resize; }
+    .img-handle.e  { right: -5px; top: 50%; margin-top: -5px; cursor: ew-resize; }
+    .img-handle.w  { left: -5px;  top: 50%; margin-top: -5px; cursor: ew-resize; }
+
   </style>
 </head>
 <body>
@@ -203,6 +219,12 @@
         <div class="error-banner">
           Пока вы редактировали, кто-то другой уже сохранил изменения этой страницы.
           Ваши правки не сохранены — откройте страницу заново и внесите их снова.
+        </div>
+      <% } %>
+        <% if (typeof error !== 'undefined' && error === 'duplicate') { %>
+        <div class="error-banner">
+          Страница с таким адресом (slug) в этой категории уже существует.
+          Измените slug или выберите другую категорию. Ваш текст сохранён.
         </div>
       <% } %>
       
@@ -249,13 +271,13 @@
           <input type="text" id="author" name="author" value="<%= page.author || '' %>" placeholder="Иван Иванов" />
         </div>
 
-        <% if (mode === 'edit') { %>
+        
         <div class="attach-bar">
           <button type="button" id="attach-file-btn" class="btn-secondary">📎 Прикрепить файл</button>
           <input type="file" id="attach-file-input" style="display: none;" />
           <span id="attach-status" class="attach-status"></span>
         </div>
-      <% } %>
+     
 
         <div class="editor-split">
           <div class="field">
@@ -265,6 +287,7 @@
         
           <div class="field">
             <div class="editor-pane-title">Предпросмотр</div>
+            <div class="preview-hint">Нажмите на картинку, чтобы изменить размер</div>
             <div class="preview-box">
               <article class="markdown" id="preview"></article>
             </div>
@@ -288,7 +311,21 @@
   </div>
   <script src="/vendor/markdown-it/browser/markdown-it.umd.min.js"></script>
 <script>
-  const md = window.markdownit(); 
+  const md = window.markdownit();
+  const defaultImage = md.renderer.rules.image;
+  md.renderer.rules.image = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    const src = token.attrGet('src') || '';
+    const m = src.match(/#w=(\d+)$/);
+    if (m) {
+      token.attrSet('src', src.replace(/#w=\d+$/, ''));
+      token.attrSet('width', m[1]);
+    }
+    return defaultImage
+      ? defaultImage(tokens, idx, options, env, self)
+      : self.renderToken(tokens, idx, options);
+  };
+  
   const textarea = document.getElementById('content');
   const preview = document.getElementById('preview');
 
@@ -311,14 +348,88 @@
   });
 
   renderPreview(); // сразу показать текущий текст при открытии редактирования
+
+  const previewBox = document.querySelector('.preview-box');
+
+  const box = document.createElement('div');
+  box.className = 'img-resizer';
+  ['nw', 'ne', 'se', 'sw', 'e', 'w'].forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'img-handle ' + d;
+    h.dataset.dir = d;
+    box.appendChild(h);
+  });
+  previewBox.appendChild(box);
+
+  let currentImg = null;
+
+  function placeBox() {
+    if (!currentImg || !currentImg.isConnected) { box.style.display = 'none'; return; }
+    const p = previewBox.getBoundingClientRect();
+    const r = currentImg.getBoundingClientRect();
+    Object.assign(box.style, {
+      display: 'block',
+      left: r.left - p.left + previewBox.scrollLeft + 'px',
+      top: r.top - p.top + previewBox.scrollTop + 'px',
+      width: r.width + 'px',
+      height: r.height + 'px'
+    });
+  }
+
+  function setImageWidth(index, width) {
+    let i = -1;
+    textarea.value = textarea.value.replace(
+      /!\[([^\]]*)\]\(([^)\s#]+)(?:#w=\d+)?\)/g,
+      (m, alt, url) => (++i === index ? `![${alt}](${url}#w=${width})` : m)
+    );
+  }
+
+  preview.addEventListener('click', e => {
+    currentImg = e.target.tagName === 'IMG' ? e.target : null;
+    placeBox();
+  });
+  document.addEventListener('click', e => {
+    if (!previewBox.contains(e.target)) { currentImg = null; placeBox(); }
+  });
+  previewBox.addEventListener('scroll', placeBox);
+
+  box.addEventListener('pointerdown', e => {
+    const dir = e.target.dataset.dir;
+    if (!dir || !currentImg) return;
+    e.preventDefault();
+
+    const index = [...preview.querySelectorAll('img')].indexOf(currentImg);
+    const startX = e.clientX;
+    const startW = currentImg.getBoundingClientRect().width;
+    const maxW = preview.clientWidth;
+    let newW = startW;
+
+    const onMove = ev => {
+      const dx = ev.clientX - startX;
+      newW = dir.includes('w') ? startW - dx : startW + dx;
+      newW = Math.round(Math.min(maxW, Math.max(30, newW)));
+      currentImg.style.width = newW + 'px';
+      placeBox();
+    };
+    const onUp = () => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      setImageWidth(index, newW);
+      renderPreview();
+      currentImg = preview.querySelectorAll('img')[index] || null;
+      placeBox();
+    };
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+  });
 </script>
 
-<% if (mode === 'edit') { %>
+
 <script>
   const attachBtn = document.getElementById('attach-file-btn');
   const attachInput = document.getElementById('attach-file-input');
   const attachStatus = document.getElementById('attach-status');
-  const pageId = <%= page.id %>;
+  const pageId = '<%= mode === "edit" ? page.id : "new" %>';
 
   const IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'];
 
@@ -326,37 +437,61 @@
     attachInput.click();
   });
 
+  async function uploadFile(file) {
+  if (!file) return;
+
+  attachStatus.textContent = 'Загрузка...';
+  attachStatus.classList.remove('error');
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const response = await fetch(`/api/uploads/${pageId}`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      attachStatus.textContent = data.error || 'Ошибка загрузки';
+      attachStatus.classList.add('error');
+      return;
+    }
+
+    insertAtCursor(data.url, data.filename);
+    attachStatus.textContent = `Прикреплено: ${data.filename}`;
+  } catch (err) {
+    attachStatus.textContent = 'Ошибка сети';
+    attachStatus.classList.add('error');
+  }
+}
+
   attachInput.addEventListener('change', async () => {
-    const file = attachInput.files[0];
-    if (!file) return;
-
-    attachStatus.textContent = 'Загрузка...';
-    attachStatus.classList.remove('error');
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await fetch(`/api/uploads/${pageId}`, {
-        method: 'POST',
-        body: formData
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        attachStatus.textContent = data.error || 'Ошибка загрузки';
-        attachStatus.classList.add('error');
+    await uploadFile(attachInput.files[0]);
+    attachInput.value = '';
+  });
+  
+  // Вставка скриншота из буфера (Ctrl+V)
+  textarea.addEventListener('paste', e => {
+    const cd = e.clipboardData;
+    if (!cd) return;
+  
+    // если в буфере есть обычный текст, вставляем его как всегда
+    if (cd.types.includes('text/plain')) return;
+  
+    for (const item of cd.items) {
+      if (item.kind === 'file' && item.type.startsWith('image/')) {
+        const blob = item.getAsFile();
+        if (!blob) continue;
+      
+        e.preventDefault();
+        const ext = item.type.split('/')[1].replace('jpeg', 'jpg');
+        const file = new File([blob], `screenshot-${Date.now()}.${ext}`, { type: item.type });
+        uploadFile(file);
         return;
       }
-
-      insertAtCursor(data.url, data.filename);
-      attachStatus.textContent = `Прикреплено: ${data.filename}`;
-    } catch (err) {
-      attachStatus.textContent = 'Ошибка сети';
-      attachStatus.classList.add('error');
-    } finally {
-      attachInput.value = '';
     }
   });
 
@@ -364,7 +499,7 @@
     const ext = url.slice(url.lastIndexOf('.')).toLowerCase();
     const isImage = IMAGE_EXTENSIONS.includes(ext);
     const markdown = isImage
-      ? `![${filename}](${url})`
+      ? `![${filename}](${url}#w=600)`
       : `[${filename}](${url})`;
 
     const start = textarea.selectionStart;
@@ -382,6 +517,6 @@
     renderPreview(); // обновляем предпросмотр сразу после вставки
   }
 </script>
-<% } %>
+
 </body>
 </html>
