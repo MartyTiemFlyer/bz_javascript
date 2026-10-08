@@ -6,8 +6,19 @@ const pool = require('../db_pool');
 const fs = require('fs');
 const path = require('path');
 
+// Middleware для обработки одиночной загрузки файла с проверкой размера
+function uploadSingle(req, res, next) {
+  upload.single('file')(req, res, (err) => {
+    if (!err) return next();
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'Файл больше 20 МБ' });
+    }
+    return res.status(400).json({ error: err.message || 'Не удалось загрузить файл' });
+  });
+}
+
 // Загрузка файла, привязанного к странице
-router.post('/:page_id', upload.single('file'), async (req, res) => {
+router.post('/:page_id', uploadSingle, async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Файл не получен' });

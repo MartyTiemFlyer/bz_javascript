@@ -90,13 +90,62 @@
 
         <!--==========================-->
         <!-- Основная область статьи-->
-        <div class="page-layout">
-          <!--    Содержание (нужно ли?)    -->
-
+        <div class="page-layout" id="page-layout">
           <!--    Markdown → HTML  -->
           <article class="markdown"><%- page_content %></article>
+
+          <!--    Содержание (строится скриптом)  -->
+          <aside class="toc" id="toc" hidden>
+            <div class="toc-title">Содержание</div>
+            <ul id="toc-list"></ul>
+          </aside>
         </div>
       </main>
     </div>
+  <script>
+  (function () {
+    const article = document.querySelector('.markdown');
+    const toc = document.getElementById('toc');
+    const list = document.getElementById('toc-list');
+    const layout = document.getElementById('page-layout');
+    if (!article || !toc) return;
+  
+    const headings = [...article.querySelectorAll('h1, h2, h3')];
+    if (headings.length < 2) return; // на коротких страницах оглавление не нужно
+  
+    // самый высокий уровень на странице считаем первым (отступ 0)
+    const minLevel = Math.min(...headings.map(h => +h.tagName[1]));
+  
+    const links = headings.map((h, i) => {
+      h.id = 'heading-' + (i + 1);
+      const li = document.createElement('li');
+      li.className = 'toc-l' + (+h.tagName[1] - minLevel + 1);
+      const a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      li.appendChild(a);
+      list.appendChild(li);
+      return a;
+    });
+  
+    toc.hidden = false;
+    layout.classList.add('has-toc');
+  
+    // подсветка текущего раздела: последний заголовок, который уже прошли
+    let ticking = false;
+    function updateActive() {
+      ticking = false;
+      let current = 0;
+      headings.forEach((h, i) => {
+        if (h.getBoundingClientRect().top <= 80) current = i;
+      });
+      links.forEach((a, i) => a.classList.toggle('active', i === current));
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(updateActive); }
+    });
+    updateActive();
+  })();
+  </script>  
   </body>
 </html>
