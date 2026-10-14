@@ -65,40 +65,93 @@ body {
    Поиск
    ========================= */
 
+/* Контейнер-«пилюля» */
 .search {
-    flex: 1;
-
-    display: flex;
-    justify-content: center;
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
+.search {
+  /* обёртка вокруг input+button */
+  position: relative;
+  display: flex;
+  align-items: stretch;
+
+  width: 100%;
+  max-width: 650px;
+  height: 42px;
+
+  margin: 0 auto;
+
+  border: 2px solid #acdde8;      /* бирюзовая рамка */
+  border-radius: 999px;           /* «пилюля» */
+  background: #ffffff;
+  overflow: hidden;               /* чтобы кнопка не вылезала за скругление */
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.search:focus-within {
+  border-color:  #acdde8; 
+  box-shadow: 0 0 0 3px rgba(10, 160, 192, 0.15);
+}
+
+/* Поле ввода */
 .search input {
-    width: 100%;
-    max-width: 650px;
-    height: 42px;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
 
-    padding: 0 16px;
+  padding: 0 16px 0 20px;
+  border: none;
+  background: transparent;
 
-    border: 1px solid #d8d8d8;
-    border-radius: 8px;
-
-    background-color: #fafafa;
-
-    color: #111111;
-    font-size: 15px;
-
-    outline: none;
+  color: #111111;
+  font-size: 15px;
+  outline: none;
 }
 
 .search input::placeholder {
-    color: #888888;
+  color: #9aa0a6;
 }
 
-.search input:focus {
-    background-color: #ffffff;
-    border-color: #111111;
+/* Кнопка внутри «пилюли» */
+.search-button {
+  flex: 0 0 auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 56px;
+  height: 100%;
+
+  border: none;
+  background:  #acdde8; ;
+  color: #ffffff;
+  cursor: pointer;
+
+  transition: background 0.15s;
 }
 
+.search-button:hover {
+  background: #6ec9de;
+}
+
+.search-button:active {
+  background: #7dcbda;
+}
+
+/* Иконка */
+.search-button svg {
+  display: block;
+}
+
+/* Фокус с клавиатуры — доступность */
+.search-button:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: -4px;
+}
 
 /* =========================
    Пользователь
@@ -366,6 +419,8 @@ body {
     padding: 55px 70px;
 
     background-color: #fafafa;
+    max-width: none;      /* или 100% */
+    width: 100%;
 }
 
 
@@ -384,7 +439,6 @@ body {
 /* Описание */
 
 .content p {
-    max-width: 700px;
 
     margin: 0 0 30px;
 
@@ -600,10 +654,10 @@ body {
    ========================= */
 
 .page-layout {
-    display: flex;
-    align-items: flex-start;
-    gap: 45px;
-
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  width: 100%;
 }
 
 
@@ -654,7 +708,6 @@ body {
    ========================= */
 
 .markdown {
-    max-width: 750px;
 
     color: #222222;
 
@@ -770,8 +823,8 @@ html { scroll-behavior: smooth; }
 /* когда оглавление есть, делаем две колонки */
 .page-layout.has-toc {
     display: grid;
-    grid-template-columns: minmax(0, 750px) 1fr;
-    gap: 40px;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 20px;
     align-items: start;
 }
 
