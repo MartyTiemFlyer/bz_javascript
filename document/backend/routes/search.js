@@ -1,12 +1,15 @@
+// search.js 
+// страница управляет маршрутизацией для поиска по базе знаний, таких как /search?q=текст
 const express = require('express');
 const router = express.Router();
 const pool = require('../db_pool');
 
-// ---------- Подсветка ----------
+// Подсветка 
 const HL_START = '[[[HL]]]';
 const HL_END = '[[[/HL]]]';
 
-function escapeHtml(str) {
+// заменяет опасные символы на безопасные HTML-коды
+function escapeHtml(str) { 
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -22,7 +25,7 @@ function buildSnippet(raw) {
     .split(HL_END).join('</mark>');
 }
 
-// "докумен  спис" -> "докумен:* & спис:*"
+// превращает ввод пользователя в запрос
 function buildTsQuery(input) {
   const terms = input
     .split(/[^\p{L}\p{N}]+/u)
@@ -31,7 +34,7 @@ function buildTsQuery(input) {
 }
 
 // ---------- Очистка Markdown (на стороне PostgreSQL) ----------
-// Каждое правило: [регулярка, замена, флаги]. Применяются по порядку.
+// Каждое правило: [регулярка, замена, флаги] Применяются по порядку.
 const MD_CLEAN_RULES = [
   // ![alt](url) и [текст](url) -> оставляем только текст
   [String.raw`!?\[([^]]*)\]\([^)]*\)`, String.raw`\1`, 'g'],
@@ -45,12 +48,12 @@ const MD_CLEAN_RULES = [
   ['[|]', ' ', 'g'],
   // **жирный**, *курсив*, `код`, ~~зачёркнутый~~
   ['[*`~]+', '', 'g'],
-  // __жирный__
   ['__', '', 'g'],
   // схлопываем пробелы и переводы строк
   ['[[:space:]]+', ' ', 'g'],
 ];
 
+// функция для очистки Markdown в SQL-запросе
 function stripMarkdownSql(column) {
   return MD_CLEAN_RULES.reduce(
     (expr, [pattern, replacement, flags]) =>
@@ -60,6 +63,7 @@ function stripMarkdownSql(column) {
 }
 
 // ---------- Маршрут ----------
+// Поиск по базе знаний. Результаты выводятся на страницу search-results.ejs
 router.get('/', async (req, res) => {
   const query = (req.query.q || '').trim();
   const tsQuery = buildTsQuery(query);
