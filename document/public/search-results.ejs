@@ -54,6 +54,9 @@
             <li>
               <a href="/<%= r.category_slug %>/<%= r.slug %>"><%= r.title %></a>
               <span class="search-result-category">в разделе «<%= r.category_title %>»</span>
+              <% if (r.snippet) { %>
+                <div class="search-result-snippet"><%- r.snippet %></div>
+              <% } %>
             </li>
           <% }); %>
         </ul>
