@@ -1039,3 +1039,6 @@ html { scroll-behavior: smooth; }
 .category-link-icon:empty {
   display: none;
 }
+.categories-heading {
+  margin: 0 0 16px;
+}
