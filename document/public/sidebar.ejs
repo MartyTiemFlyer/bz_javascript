@@ -10,20 +10,20 @@
   <span>Новая страница</span>
 </a>
 
+
   <!-- Секции боковой панели -->
   <% sidebarSections.forEach(function(section) { %>
     <div class="sidebar-section">
-      <a href="/<%= section.slug %>" class="sidebar-section-title">
-        
-        <span><%- section.icon %></span>
-        <span><%= section.title %></span>
+      <a href="/<%= section.slug %>" class="sidebar-section-title" title="<%= section.title %>">
+        <span class="sidebar-icon"><%= section.icon %></span>
+        <span class="sidebar-section-text"><%= section.title %></span>
       </a>
       <% if (section.links.length > 0) { %>
         <div class="sidebar-links">
           <% section.links.forEach(function(link) { %>
-            <a href="/<%= section.slug %>/<%= link.slug %>" class="sidebar-link">
+            <a href="/<%= section.slug %>/<%= link.slug %>" class="sidebar-link" title="<%= link.title %>">
               <span class="page-icon">📄</span>
-              <%= link.title %>
+              <span class="sidebar-link-text"><%= link.title %></span>
             </a>
           <% }); %>
         </div>

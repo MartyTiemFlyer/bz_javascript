@@ -49,17 +49,17 @@
       <% if (results.length === 0) { %>
         <p class="empty-state">Ничего не найдено.</p>
       <% } else { %>
-        <ul class="page-list">
-          <% results.forEach(function(r) { %>
-            <li>
-              <a href="/<%= r.category_slug %>/<%= r.slug %>"><%= r.title %></a>
-              <span class="search-result-category">в разделе «<%= r.category_title %>»</span>
-              <% if (r.snippet) { %>
-                <div class="search-result-snippet"><%- r.snippet %></div>
-              <% } %>
-            </li>
-          <% }); %>
-        </ul>
+        <ul class="page-list search-list">
+  <% results.forEach(function(r) { %>
+    <li class="search-item">
+      <a class="search-item-title" href="/<%= r.category_slug %>/<%= r.slug %>"><%= r.title %></a>
+      <div class="search-result-category">Раздел: <%= r.category_title %></div>
+      <% if (r.snippet) { %>
+        <div class="search-result-snippet"><%- r.snippet %></div>
+      <% } %>
+    </li>
+  <% }); %>
+</ul>
       <% } %>
     </main>
   </div>

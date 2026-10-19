@@ -88,10 +88,10 @@
           <% if (pages.length === 0) { %>
             <p class="empty-state">В этой категории пока нет страниц.</p>
           <% } else { %>
-            <ul class="page-list">
+            <ul class="page-list category-pages">
               <% pages.forEach(function(page) { %>
                 <li>
-                  <a href="/<%- category_slug %>/<%- page.slug %>"><%- page.title %></a>
+                  <a class="category-page-link" href="/<%= category_slug %>/<%= page.slug %>"><%= page.title %></a>
                 </li>
               <% }); %>
             </ul>

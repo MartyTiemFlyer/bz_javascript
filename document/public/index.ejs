@@ -60,26 +60,25 @@
         <p>
           Здесь находится документация, инструкции и полезная информация. 
         </p>
+        
         <% if (isAuthenticated) { %>
-            <p>
-                <a href="/edit/attachments" class="btn-secondary">📁 Все файлы</a>
-                 - Просмотр и редактирование загруженных файлов
-                
-            </p>
-        <% } else { %>
-            <p>
-                Просмотр и редактирование файлов на диске доступно только авторизованным пользователям.
-            </p>
-        <% } %>
-
-
-
-        <h1></h1>
-        <div class="category-links">
+        <p>
+          <a href="/edit/attachments" class="btn-secondary">📁 Все файлы</a>
+          - Просмотр и редактирование загруженных файлов
+        </p>
+      <% } else { %>
+        <p>
+          Просмотр и редактирование файлов на диске доступно только авторизованным пользователям.
+        </p>
+      <% } %>
+      
+      <hr class="section-divider">
+      
+      <div class="category-links">
         <% categories.forEach(function(category) { %>
-          <a href="/<%- category.slug %>">
-            <span><%- category.icon %></span>
-            <span><%- category.title %></span>
+          <a class="category-link" href="/<%= category.slug %>">
+            <span class="category-link-icon"><%= category.icon %></span>
+            <span class="category-link-title"><%= category.title %></span>
           </a>
         <% }); %>
       </div>
