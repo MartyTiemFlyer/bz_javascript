@@ -75,7 +75,6 @@
             >
               ✏️ Редактировать
             </a>
-
             <form
               method="POST"
               action="/edit/page/<%= page_category_slug %>/<%= page_slug %>/delete"
@@ -92,6 +91,7 @@
                 🗑️ Удалить страницу
               </button>
             </form>
+            <button type="button" class="print-button no-print" id="print-btn">🖨️ Скачать PDF</button>
           </div>
         </div>
 
@@ -153,6 +153,25 @@
     });
     updateActive();
   })();
+  (function () {
+    var btn = document.getElementById('print-btn');
+    if (!btn) return;
+
+    var originalTitle = document.title;
+
+    window.addEventListener('beforeprint', function () {
+      var h1 = document.querySelector('.content h1');
+      if (h1 && h1.textContent.trim()) {
+        document.title = h1.textContent.trim();
+      }
+    });
+    window.addEventListener('afterprint', function () {
+      document.title = originalTitle;
+    });
+
+    btn.addEventListener('click', function () { window.print(); });
+  })();
+  
   </script>  
   </body>
 </html>
