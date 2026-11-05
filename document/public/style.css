@@ -1154,3 +1154,32 @@ html { scroll-behavior: smooth; }
     background: #f0fdf4;
     border-color: #86efac;
 }
+
+/* ------------ Панель над таблицей ------------ */
+.table-tools {
+  display: flex;
+  justify-content: flex-end;
+  margin: 16px 0 6px;
+}
+
+.content button.copy-table-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  color: #1f2937;
+  border: 1px solid #d1d5db;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: normal;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.content button.copy-table-button:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
