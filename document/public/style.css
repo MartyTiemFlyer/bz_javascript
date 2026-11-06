@@ -1093,6 +1093,7 @@ html { scroll-behavior: smooth; }
   a { color: inherit; text-decoration: none; }
 }
 
+/* --------- Печать: таблицы @media print --------- */
 @media print {
   html, body, .layout, .content, main {
     background: #fff !important;
@@ -1109,7 +1110,14 @@ html { scroll-behavior: smooth; }
     font-weight: inherit !important;
     color: #1a56c4 !important;
     text-decoration: underline !important;
+
+    
   }
+
+.content thead { display: table-header-group; } /* шапка повторяется на каждой странице */
+.content tr { break-inside: avoid; }            /* строка не рвётся пополам */
+.content table { font-size: 12px; }
+
 }
 
 /* ---------------------------------------- */
@@ -1210,4 +1218,30 @@ html { scroll-behavior: smooth; }
 .content button.copy-table-button:hover {
   background: #f3f4f6;
   border-color: #9ca3af;
+}
+
+/* ------------ Кнопка «Скачать Excel» ------------ */
+.content button.xlsx-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  color: #1f2937;
+  border: 1px solid #d1d5db;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: normal;
+  cursor: pointer;
+  box-shadow: none;
+}
+.content button.xlsx-button:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+/* без этого display выше перебивает атрибут hidden */
+.content button.xlsx-button[hidden] {
+  display: none;
 }

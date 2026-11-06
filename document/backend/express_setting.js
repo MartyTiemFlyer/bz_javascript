@@ -16,6 +16,14 @@ app.use('/vendor/markdown-it', express.static(
 ));
 console.log('markdown-it dist path:', path.join(__dirname, '..', 'node_modules', 'markdown-it', 'dist'));
 
+// Подключаем всю папку exceljs из node_modules под псевдонимом /vendor/exceljs (добавили '..')
+app.use('/vendor/exceljs', express.static(
+  path.join(__dirname, '..', 'node_modules', 'exceljs')
+));
+console.log('exceljs path:', path.join(__dirname, '..', 'node_modules', 'exceljs'));
+
+
+
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 // Настройка сессий

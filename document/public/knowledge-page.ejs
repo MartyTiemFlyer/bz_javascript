@@ -18,6 +18,7 @@
         <span>База знаний ЦТС</span>
       </a>
 
+      <!-- Поиск -->
       <form class="search" action="/search" method="GET">
         <input type="text" name="q" placeholder="Поиск по базе знаний..." value="<%= typeof query !== 'undefined' ? query : '' %>" />
         <button type="submit" class="search-button" aria-label="Найти">
@@ -28,6 +29,7 @@
             </svg>
         </button>
       </form>
+      <!-- ---------------------- -->
 
       <% if (isAuthenticated) { %>
         <form method="POST" action="/logout" class="user-logout-form">
@@ -92,6 +94,8 @@
               </button>
             </form>
             <button type="button" class="print-button no-print" id="print-btn">🖨️ Печать </button>
+            <button type="button" class="xlsx-button no-print" id="xlsx-btn" hidden>📊 Скачать Excel</button>
+          
           </div>
         </div>
 
@@ -172,7 +176,8 @@
     btn.addEventListener('click', function () { window.print(); });
   })();
   
-  </script>  
+  </script>
+  <script src="/vendor/exceljs/dist/exceljs.min.js"></script> 
   <script src="/table-tools.js"></script>
   </body>
 </html>
