@@ -33,6 +33,8 @@
       resize: none;
     }
 
+    /* --------------------------- */
+    /* Предпросмотр */
     .preview-box {
       height: 560px;
       overflow-y: auto;
@@ -47,6 +49,49 @@
       color: #9ca3af;
       font-size: 14px;
     }
+
+    /* Основной контейнер таблицы */
+    .preview-box table {
+      border-collapse: collapse;
+      width: auto;
+      max-width: 100%;
+      margin: 20px 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #1f2937;
+      background-color: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .preview-box th,
+    .preview-box td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+      border-right: 1px solid #f3f4f6;
+    }
+    
+    .preview-box th:last-child,
+    .preview-box td:last-child {
+      border-right: none;
+    }
+    
+    .preview-box th {
+      background-color: #d8edff;
+      font-weight: 600;
+      color: #111827;
+      border-bottom: 2px solid #d1d5db;
+    }
+    
+    .preview-box tbody tr:hover {
+      background-color: #cddceb;
+    }
+
+    /* --------------------------- */
+
+
 
     @media (max-width: 900px) {
       .editor-split { grid-template-columns: 1fr; }

@@ -223,7 +223,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
-    min-width: 0;                 /* НОВОЕ: текст может сжиматься */
+    min-width: 0;               
 
     padding: 9px 12px;
 
@@ -247,7 +247,7 @@ body {
 
 .sidebar-section-title > span:first-child {
     width: 24px;
-    flex-shrink: 0;               /* НОВОЕ: иконка не сжимается */
+    flex-shrink: 0;               
 
     display: flex;
     align-items: center;
@@ -289,7 +289,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    min-width: 0;                 /* НОВОЕ: текст может сжиматься */
+    min-width: 0;              
 
     padding: 7px 10px;
 
@@ -1120,7 +1120,7 @@ html { scroll-behavior: smooth; }
 
 }
 
-/* ---------------------------------------- */
+/* ---------------- ТАБЛИЦЫ -------------------- */
 /* Основной контейнер таблицы */
 .content table {
   border-collapse: collapse;
@@ -1166,31 +1166,6 @@ html { scroll-behavior: smooth; }
 
 
 /* ---------------------------------------- */
-
-/* Кнопка печати в PDF */
-.content button.print-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #fff;
-    color: #14532d;
-    border: 1px solid #bbf7d0;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    line-height: normal;
-    text-decoration: none;
-    cursor: pointer;
-    box-shadow: none;
-}
-
-.content button.print-button:hover {
-    background: #f0fdf4;
-    border-color: #86efac;
-}
-
 /* ------------ Панель над таблицей ------------ */
 .table-tools {
   display: flex;
@@ -1220,8 +1195,14 @@ html { scroll-behavior: smooth; }
   border-color: #9ca3af;
 }
 
-/* ------------ Кнопка «Скачать Excel» ------------ */
-.content button.xlsx-button {
+
+/* ------------ Кнопка Печать как список ------------ */
+.print-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.content button.print-menu-toggle {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1237,11 +1218,49 @@ html { scroll-behavior: smooth; }
   cursor: pointer;
   box-shadow: none;
 }
-.content button.xlsx-button:hover {
+.content button.print-menu-toggle:hover,
+.content button.print-menu-toggle[aria-expanded="true"] {
   background: #f3f4f6;
   border-color: #9ca3af;
 }
-/* без этого display выше перебивает атрибут hidden */
-.content button.xlsx-button[hidden] {
-  display: none;
+.print-menu-caret { font-size: 11px; opacity: 0.7; }
+
+.print-menu-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 50;
+  min-width: 230px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid #e3e6ec;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.12);
 }
+.print-menu-list[hidden] { display: none; }
+
+.content button.print-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  color: #1f2937;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: none;
+}
+.content button.print-menu-item:hover { background: #f3f4f6; }
+.content button.print-menu-item[hidden] { display: none; }
+.content button.print-menu-item:disabled { opacity: 0.6; cursor: default; }
+
+.menu-icon { flex-shrink: 0; }
+/* --------------------------------- */
+

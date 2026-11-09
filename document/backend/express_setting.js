@@ -39,8 +39,14 @@ app.use(session({
 
 // const categoriesRouter = require('./routes/categories');
 const tasksRouter = require('./routes/tasks');
-
 // app.use('/categories', categoriesRouter);
 app.use('/tasks', tasksRouter);
+
+// Подключаем роутер для экспорта в Word
+const exportRouter = require('./routes/export');
+app.use('/export', exportRouter);
+console.log('[express] подключён роутер /export');
+
+
 module.exports = app;
 

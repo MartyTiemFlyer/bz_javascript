@@ -93,9 +93,42 @@
                 🗑️ Удалить страницу
               </button>
             </form>
-            <button type="button" class="print-button no-print" id="print-btn">🖨️ Печать </button>
-            <button type="button" class="xlsx-button no-print" id="xlsx-btn" hidden>📊 Скачать Excel</button>
-          
+            
+            <div class="print-menu no-print" id="print-menu">
+  <button type="button" class="print-menu-toggle" id="print-menu-btn"
+          aria-haspopup="true" aria-expanded="false">
+    🖨️ Печать <span class="print-menu-caret">▾</span>
+  </button>
+
+  <div class="print-menu-list" id="print-menu-list" hidden>
+    <button type="button" class="print-menu-item" id="print-btn">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <path d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#fff" stroke="#9ca3af"/>
+        <path d="M14 2v5h5" fill="#e5e7eb" stroke="#9ca3af"/>
+        <rect x="2" y="12" width="15" height="7" rx="1.5" fill="#dc2626"/>
+        <text x="9.5" y="17.6" font-size="5.6" font-weight="700" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif">PDF</text>
+      </svg>
+      <span class="menu-label">Печать / сохранить в PDF</span>
+    </button>
+
+    <button type="button" class="print-menu-item" id="xlsx-btn" hidden>
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="3" fill="#16a34a"/>
+        <path d="M8.5 8l7 8M15.5 8l-7 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span class="menu-label">Скачать Excel</span>
+    </button>
+    <button type="button" class="print-menu-item" id="word-btn">
+      <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="3" fill="#2563eb"/>
+        <path d="M7 8l2 8 3-6 3 6 2-8" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="menu-label">Скачать Word</span>
+    </button>
+
+  </div>
+</div>
+
           </div>
         </div>
 
@@ -177,7 +210,37 @@
   })();
   
   </script>
+  <script>
+(function () {
+  var menu = document.getElementById('print-menu');
+  var toggle = document.getElementById('print-menu-btn');
+  var list = document.getElementById('print-menu-list');
+  if (!menu || !toggle || !list) return;
+
+  function setOpen(open) {
+    list.hidden = !open;
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  toggle.addEventListener('click', function (e) {
+    e.stopPropagation();
+    setOpen(list.hidden);
+  });
+
+  // клик по пункту закрывает меню
+  list.addEventListener('click', function () { setOpen(false); });
+
+  // клик вне меню и Escape тоже закрывают
+  document.addEventListener('click', function (e) {
+    if (!menu.contains(e.target)) setOpen(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') setOpen(false);
+  });
+})();
+</script>
   <script src="/vendor/exceljs/dist/exceljs.min.js"></script> 
   <script src="/table-tools.js"></script>
+  <script src="/word-export.js"></script>
   </body>
 </html>
